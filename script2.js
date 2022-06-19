@@ -6,7 +6,7 @@ const websiteNameEl = document.getElementById("website-name");
 const websiteUrlEl = document.getElementById("website-url");
 const bookmarksContainer = document.getElementById("bookmarks-container");
 
-let bookmarks = [];
+let bookmarks = {};
 
 // Show modal, Focus on first input
 function showModal() {
@@ -49,8 +49,8 @@ function buildBookmarks() {
   // Remove all bookmarks from DOM
   bookmarksContainer.textContent = "";
   // Build Items
-  bookmarks.forEach((bookmark) => {
-    const { name, url } = bookmark;
+  Object.keys(bookmarks).forEach((id) => {
+    const { name, url } = bookmark[id];
     // Item
     const item = document.createElement("div");
     item.classList.add("item");
@@ -88,12 +88,11 @@ function fetchBookmarks() {
     bookmarks = JSON.parse(localStorage.getItem("bookmarks"));
   } else {
     // Create a new array if no bookmarks are available in local storage
-    bookmarks = [
-      {
-        name: "Google",
-        url: "https://www.google.com",
-      },
-    ];
+    const id = `www.google.com`;
+    bookmarks[id] = {
+      name: "Google",
+      url: "https://www.google.com",
+    };
     localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
   }
   //   Build bookmarks
@@ -101,12 +100,11 @@ function fetchBookmarks() {
 }
 
 // Delete Bookmark
-function deleteBookmark(url) {
-  bookmarks.forEach((bookmark, i) => {
-    if (bookmark.url === url) {
-      bookmarks.splice(i, 1);
-    }
-  });
+function deleteBookmark(id) {
+  // Loop through bookmarks array
+  if (bookmark[id]) {
+    delete bookmarks[id];
+  }
   //   Update bookmarks array in local storage, re-populate DOM
   localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
   fetchBookmarks();
